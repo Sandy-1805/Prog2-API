@@ -1,0 +1,155 @@
+openapi: 3.0.0
+info:
+  title: API Gestion de Tâches
+  version: 1.0.0
+  description: API pour la gestion des tâches avec opérations CRUD
+
+paths:
+  /tasks:
+    get:
+      summary: Récupère la liste de toutes les tâches
+      description: Retourne un tableau contenant toutes les tâches
+      responses:
+        '200':
+          description: Liste des tâches récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    
+    post:
+      summary: Crée de nouvelles tâches
+      description: Crée une ou plusieurs nouvelles tâches à partir des données fournies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TaskInput'
+      responses:
+        '201':
+          description: Tâches créées avec succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+
+  /tasks/{id}:
+    get:
+      summary: Récupère une tâche par son ID
+      description: Retourne la tâche correspondant à l'identifiant fourni
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identifiant de la tâche
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Tâche récupérée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Tâche non trouvée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Task not found"
+    
+    delete:
+      summary: Supprime une tâche par son ID
+      description: Supprime la tâche correspondant à l'identifiant fourni
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identifiant de la tâche à supprimer
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Tâche supprimée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Tâche non trouvée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Task not found"
+
+  /tasks/delete:
+    post:
+      summary: Supprime une liste de tâches
+      description: Supprime les tâches correspondant aux identifiants fournis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+                minimum: 1
+              example: [1, 2, 3]
+      responses:
+        '200':
+          description: Tâches supprimées avec succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "Faire les courses"
+        completed:
+          type: boolean
+          example: false
+      required:
+        - id
+        - title
+        - completed
+    
+    TaskInput:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Faire les courses"
+        completed:
+          type: boolean
+          example: false
+      required:
+        - title
