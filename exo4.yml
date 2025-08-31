@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  title: API Recherche de Produits
+  version: 1.0.0
+  description: API pour la recherche de produits
+
+paths:
+  /products:
+    get:
+      summary: Recherche des produits
+      description: Retourne une liste de produits filtrés selon les critères de recherche
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/qParam'
+      responses:
+        '200':
+          description: Liste des produits trouvés
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+              examples:
+                multipleProducts:
+                  summary: Exemple avec plusieurs produits
+                  value:
+                    - name: "Lait"
+                      expiration_datetime: "2024-12-31T23:59:59Z"
+                      price: 2.99
+                    - name: "Pain complet"
+                      expiration_datetime: "2024-06-15T12:00:00Z"
+                      price: 3.49
+                    - name: "Fromage"
+                      expiration_datetime: "2024-07-20T18:30:00Z"
+                      price: 5.75
+                emptyList:
+                  summary: Exemple avec liste vide
+                  value: []
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Yaourt nature"
+        expiration_datetime:
+          type: string
+          format: date-time
+          example: "2024-08-10T14:30:00Z"
+        price:
+          type: number
+          format: float
+          minimum: 0
+          example: 1.99
+      required:
+        - name
+        - expiration_datetime
+        - price
+
+  parameters:
+    limitParam:
+      name: limit
+      in: query
+      description: Nombre maximum de produits à retourner
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      example: 10
+
+    qParam:
+      name: q
+      in: query
+      description: Terme de recherche pour filtrer les produits par nom
+      required: false
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+      example: "lait"
+          
